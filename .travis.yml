@@ -1,0 +1,18 @@
+language: csharp
+mono: latest
+dotnet: 2.0.0
+solution: Resolution.sln
+
+install:
+ - curl -L -o nuget.exe https://dist.nuget.org/win-x86-commandline/latest/nuget.exe
+ - mono nuget.exe restore Resolution.sln
+ - mono nuget.exe install NUnit.Runners -OutputDirectory testrunner
+ - mono nuget.exe install Nunit3TestAdapter -OutputDirectory testrunner
+ - mono nuget.exe install Microsoft.NET.Test.Sdk -OutputDirectory testrunner
+
+script:
+ - msbuild Resolution.sln /p:Configuration=Release
+ - mono ./testrunner/NUnit.ConsoleRunner.*/tools/nunit3-console.exe ./Resolution.Tests/bin/Release/net45/Resolution.Tests.dll
+ - mono ./testrunner/NUnit.ConsoleRunner.*/tools/nunit3-console.exe ./Resolution.Tests/bin/Release/net461/Resolution.Tests.dll
+ - mono ./testrunner/NUnit.ConsoleRunner.*/tools/nunit3-console.exe ./Resolutions.Tests/bin/Release/net462/Resolution.Tests.dll
+ - dotnet test Resolution.Tests/Resolution.Tests.csproj -f netcoreapp2.0
