@@ -1,0 +1,183 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netcoreapp2.0;net45;net461;net462</TargetFrameworks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Unit\Fixtures\CharacterString\empty-string" />
+    <None Remove="Unit\Fixtures\CharacterString\www-string" />
+    <None Remove="Unit\Fixtures\CharacterString\www.google.com-string" />
+    <None Remove="Unit\Fixtures\Domain\empty-header_www.google.com-label" />
+    <None Remove="Unit\Fixtures\Domain\empty-header_www.google.com-pointer" />
+    <None Remove="Unit\Fixtures\Domain\empty-label" />
+    <None Remove="Unit\Fixtures\Domain\empty-pointer" />
+    <None Remove="Unit\Fixtures\Domain\www-label" />
+    <None Remove="Unit\Fixtures\Domain\www-pointer" />
+    <None Remove="Unit\Fixtures\Domain\www.google.com-label" />
+    <None Remove="Unit\Fixtures\Domain\www.google.com-pointer" />
+    <None Remove="Unit\Fixtures\Header\aa" />
+    <None Remove="Unit\Fixtures\Header\all" />
+    <None Remove="Unit\Fixtures\Header\ancount" />
+    <None Remove="Unit\Fixtures\Header\arcount" />
+    <None Remove="Unit\Fixtures\Header\cd" />
+    <None Remove="Unit\Fixtures\Header\empty" />
+    <None Remove="Unit\Fixtures\Header\id" />
+    <None Remove="Unit\Fixtures\Header\nscount" />
+    <None Remove="Unit\Fixtures\Header\opcode" />
+    <None Remove="Unit\Fixtures\Header\qdcount" />
+    <None Remove="Unit\Fixtures\Header\qr" />
+    <None Remove="Unit\Fixtures\Header\ra" />
+    <None Remove="Unit\Fixtures\Header\rcode" />
+    <None Remove="Unit\Fixtures\Header\rd" />
+    <None Remove="Unit\Fixtures\Header\tc" />
+    <None Remove="Unit\Fixtures\Question\empty-domain_any" />
+    <None Remove="Unit\Fixtures\Question\empty-domain_basic" />
+    <None Remove="Unit\Fixtures\Question\empty-domain_cname" />
+    <None Remove="Unit\Fixtures\Question\multiple" />
+    <None Remove="Unit\Fixtures\Question\www-google-com_all" />
+    <None Remove="Unit\Fixtures\Question\www-google-com_basic" />
+    <None Remove="Unit\Fixtures\Request\edns-test" />
+    <None Remove="Unit\Fixtures\Request\empty-header_basic-question" />
+    <None Remove="Unit\Fixtures\Request\id-rd_www.google.com-cname" />
+    <None Remove="Unit\Fixtures\Request\multiple-questions" />
+    <None Remove="Unit\Fixtures\ResourceRecord\empty-domain_any" />
+    <None Remove="Unit\Fixtures\ResourceRecord\empty-domain_basic" />
+    <None Remove="Unit\Fixtures\ResourceRecord\empty-domain_cname" />
+    <None Remove="Unit\Fixtures\ResourceRecord\empty-domain_data" />
+    <None Remove="Unit\Fixtures\ResourceRecord\empty-domain_ttl" />
+    <None Remove="Unit\Fixtures\ResourceRecord\multiple" />
+    <None Remove="Unit\Fixtures\ResourceRecord\www-google-com_all" />
+    <None Remove="Unit\Fixtures\ResourceRecord\www-google-com_basic" />
+    <None Remove="Unit\Fixtures\Response\empty-header_basic" />
+    <None Remove="Unit\Fixtures\Response\id-ra_all" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Unit\Fixtures\CharacterString\empty-string" />
+    <EmbeddedResource Include="Unit\Fixtures\CharacterString\www-string" />
+    <EmbeddedResource Include="Unit\Fixtures\CharacterString\www.google.com-string" />
+    <EmbeddedResource Include="Unit\Fixtures\Domain\empty-header_www.google.com-label" />
+    <EmbeddedResource Include="Unit\Fixtures\Domain\empty-header_www.google.com-pointer" />
+    <EmbeddedResource Include="Unit\Fixtures\Domain\empty-label" />
+    <EmbeddedResource Include="Unit\Fixtures\Domain\empty-pointer" />
+    <EmbeddedResource Include="Unit\Fixtures\Domain\www-label" />
+    <EmbeddedResource Include="Unit\Fixtures\Domain\www-pointer" />
+    <EmbeddedResource Include="Unit\Fixtures\Domain\www.google.com-label" />
+    <EmbeddedResource Include="Unit\Fixtures\Domain\www.google.com-pointer" />
+    <EmbeddedResource Include="Unit\Fixtures\Header\aa">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Unit\Fixtures\Header\all">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Unit\Fixtures\Header\ancount">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Unit\Fixtures\Header\arcount">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Unit\Fixtures\Header\cd">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Unit\Fixtures\Header\empty">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Unit\Fixtures\Header\id">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Unit\Fixtures\Header\nscount">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Unit\Fixtures\Header\opcode">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Unit\Fixtures\Header\qdcount">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Unit\Fixtures\Header\qr">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Unit\Fixtures\Header\ra">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Unit\Fixtures\Header\rcode">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Unit\Fixtures\Header\rd">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Unit\Fixtures\Header\tc">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Unit\Fixtures\Question\empty-domain_any">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Unit\Fixtures\Question\empty-domain_basic">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Unit\Fixtures\Question\empty-domain_cname">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Unit\Fixtures\Question\multiple">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Unit\Fixtures\Question\www-google-com_all">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Unit\Fixtures\Question\www-google-com_basic">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Unit\Fixtures\Request\edns-test" />
+    <EmbeddedResource Include="Unit\Fixtures\Request\empty-header_basic-question" />
+    <EmbeddedResource Include="Unit\Fixtures\Request\id-rd_www.google.com-cname" />
+    <EmbeddedResource Include="Unit\Fixtures\Request\multiple-questions" />
+    <EmbeddedResource Include="Unit\Fixtures\ResourceRecord\empty-domain_any">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Unit\Fixtures\ResourceRecord\empty-domain_basic">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Unit\Fixtures\ResourceRecord\empty-domain_cname">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Unit\Fixtures\ResourceRecord\empty-domain_data">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Unit\Fixtures\ResourceRecord\empty-domain_ttl">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Unit\Fixtures\ResourceRecord\multiple">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Unit\Fixtures\ResourceRecord\www-google-com_all">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Unit\Fixtures\ResourceRecord\www-google-com_basic">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Unit\Fixtures\Response\empty-header_basic">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Unit\Fixtures\Response\id-ra_all">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="15.7.2" />
+    <PackageReference Include="NUnit" Version="3.10.1" />
+    <PackageReference Include="NUnit3TestAdapter" Version="3.10.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Resolution\Resolution.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Unit\Fixtures\Header\ad">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>
