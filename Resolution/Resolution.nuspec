@@ -1,0 +1,17 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>Resolution</id>
+    <version>$version$</version>
+    <title>$title$</title>
+    <authors>Dan Nielsen</authors>
+    <owners>danielsen</owners>
+    <licenseUrl>https://github.com/danielsen/Resolution/blob/master/LICENSE</licenseUrl>
+    <projectUrl>https://github.com/danielsen/Resolution</projectUrl>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>$description$</description>
+    <releaseNotes>First release</releaseNotes>
+    <copyright>Copyright 2018</copyright>
+    <tags>dns</tags>
+  </metadata>
+</package>
