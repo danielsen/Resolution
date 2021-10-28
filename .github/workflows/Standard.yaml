@@ -41,10 +41,10 @@ jobs:
         dotnet-version: 5.0.x
 
     - name: Restore
-      run: dotnet restore src/Reachmail
+      run: dotnet restore src/Resolution
 
     - name: Build
-      run: dotnet build --configuration Release --no-restore src/Reachmail
+      run: dotnet build --configuration Release --no-restore src/Resolution
 
     - name: Test
-      run: dotnet test src/Reachmail
+      run: dotnet test src/Resolution
