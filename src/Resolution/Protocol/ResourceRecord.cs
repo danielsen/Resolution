@@ -107,6 +107,12 @@ namespace Resolution.Protocol
         {
             return $"{Name,-32} {Ttl}\t{Class}\t{Type}\t{Record}";
         }
+
+        public bool IsExpired(DateTime responseTimestamp)
+        {
+	        var timeLived = (int)(DateTime.Now.Ticks - responseTimestamp.Ticks) / TimeSpan.TicksPerSecond;
+	        return (uint)Math.Max(0, Ttl - timeLived) == 0;
+        }
     }
 
     public class AnswerResourceRecord : ResourceRecord

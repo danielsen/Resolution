@@ -38,32 +38,33 @@ namespace Resolution.Protocol
 	*/
     #endregion
 
-    public class Question
+    public sealed class Question : IEquatable<Question>
     {
-        private string _mQName;
-        public string QName
+        private string _mDomainName;
+        public string DomainName
         {
-            get => _mQName;
+            get => _mDomainName;
             set
             {
-                _mQName = value;
-                if (!_mQName.EndsWith("."))
-                    _mQName += ".";
+                _mDomainName = value;
+                if (!_mDomainName.EndsWith("."))
+                    _mDomainName += ".";
             }
         }
-        public QuestionType QuestionType;
-        public QuestionClass QuestionClass;
+        
+        public readonly QuestionType QuestionType;
+        public readonly QuestionClass QuestionClass;
 
-        public Question(string qName, QuestionType questionType, QuestionClass questionClass)
+        public Question(string domainName, QuestionType questionType, QuestionClass questionClass)
         {
-            QName = qName;
+            DomainName = domainName;
             QuestionType = questionType;
             QuestionClass = questionClass;
         }
 
         public Question(RecordReader rr)
         {
-            QName = rr.ReadDomainName();
+            DomainName = rr.ReadDomainName();
             QuestionType = (QuestionType)rr.ReadUInt16();
             QuestionClass = (QuestionClass)rr.ReadUInt16();
         }
@@ -97,7 +98,7 @@ namespace Resolution.Protocol
             get
             {
                 List<byte> data = new List<byte>();
-                data.AddRange(WriteName(QName));
+                data.AddRange(WriteName(DomainName));
                 data.AddRange(WriteShort((ushort)QuestionType));
                 data.AddRange(WriteShort((ushort)QuestionClass));
                 return data.ToArray();
@@ -109,10 +110,42 @@ namespace Resolution.Protocol
             return BitConverter.GetBytes(IPAddress.HostToNetworkOrder((short)sValue));
         }
 
+        public static bool operator ==(Question a, Question b)
+        {
+            return Equals(a, b);
+        }
+        
+        public static bool operator !=(Question a, Question b)
+        {
+            return !Equals(a, b);
+        }
+
+        public bool Equals(Question other)
+        {
+            if (other is null)
+                return false;
+
+            if (ReferenceEquals(this, other))
+                return true;
+
+            return string.Equals(DomainName, other.DomainName, StringComparison.InvariantCultureIgnoreCase)
+                   && QuestionType == other.QuestionType && QuestionClass == other.QuestionClass;
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is null)
+                return false;
+
+            if (ReferenceEquals(this, obj))
+                return true;
+
+            return obj.GetType() == GetType() && Equals((Question)obj);
+        }
 
         public override string ToString()
         {
-            return $"{QName,-32}\t{QuestionClass}\t{QuestionType}";
+            return $"{DomainName,-32}\t{QuestionClass}\t{QuestionType}";
         }
     }
 }

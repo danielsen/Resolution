@@ -8,6 +8,8 @@ using System.Net.Sockets;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
+using Resolution.Common;
+using Resolution.Common.Caching;
 using Resolution.Protocol.Records;
 
 namespace Resolution.Protocol
@@ -17,6 +19,22 @@ namespace Resolution.Protocol
 	/// </summary>
 	public class Resolver
     {
+        private readonly IResponseCache _cache = null;
+        private ushort _unique;
+        
+        internal Resolver(ResolverContext context)
+        {
+            Retries = context.Retries;
+            TimeOut = context.Timeout;
+            TransportType = context.TransportType;
+            Recursion = context.UseRecursion;
+            DnsServers = context.DnsServers.Count == 0 ? GetDnsServers() : context.DnsServers;
+            UseCache = context.UseCache;
+
+            if (context.UseCache)
+                _cache = new ResponseCache(context.CacheSize);
+        }
+        
         /// <summary>
         /// Version of this set of routines, when not in a library
         /// </summary>
@@ -26,73 +44,12 @@ namespace Resolution.Protocol
         /// Default DNS port
         /// </summary>
         public const int DefaultPort = 53;
+        
+        public int Retries { get; }
 
-        private ushort _mUnique;
-        private int _mRetries;
-
-        private readonly List<IPEndPoint> _mDnsServers;
-
-        /// <summary>
-        /// Constructor of Resolver using DNS servers specified.
-        /// </summary>
-        /// <param name="dnsServers">Set of DNS servers</param>
-        public Resolver(IPEndPoint[] dnsServers)
-        {
-            _mDnsServers = new List<IPEndPoint>();
-            _mDnsServers.AddRange(dnsServers);
-
-            _mUnique = (ushort)(new Random()).Next();
-            _mRetries = 3;
-            TimeOut = 1;
-            Recursion = true;
-            TransportType = TransportType.Udp;
-        }
-
-        /// <summary>
-        /// Constructor of Resolver using DNS server specified.
-        /// </summary>
-        /// <param name="dnsServer">DNS server to use</param>
-        public Resolver(IPEndPoint dnsServer)
-            : this(new[] { dnsServer })
-        {
-        }
-
-        /// <summary>
-        /// Constructor of Resolver using DNS server and port specified.
-        /// </summary>
-        /// <param name="serverIpAddress">DNS server to use</param>
-        /// <param name="serverPortNumber">DNS port to use</param>
-        public Resolver(IPAddress serverIpAddress, int serverPortNumber)
-            : this(new IPEndPoint(serverIpAddress, serverPortNumber))
-        {
-        }
-
-        /// <summary>
-        /// Constructor of Resolver using DNS address and port specified.
-        /// </summary>
-        /// <param name="serverIpAddress">DNS server address to use</param>
-        /// <param name="serverPortNumber">DNS port to use</param>
-        public Resolver(string serverIpAddress, int serverPortNumber)
-            : this(IPAddress.Parse(serverIpAddress), serverPortNumber)
-        {
-        }
-
-        /// <summary>
-        /// Constructor of Resolver using DNS address.
-        /// </summary>
-        /// <param name="serverIpAddress">DNS server address to use</param>
-        public Resolver(string serverIpAddress)
-            : this(IPAddress.Parse(serverIpAddress), DefaultPort)
-        {
-        }
-
-        /// <summary>
-        /// Resolver constructor, using DNS servers specified by Windows
-        /// </summary>
-        public Resolver()
-            : this(GetDnsServers())
-        {
-        }
+        public IList<IPEndPoint> DnsServers { get; }
+        
+        public bool UseCache { get; }
 
         public class VerboseOutputEventArgs : EventArgs
         {
@@ -129,83 +86,40 @@ namespace Resolution.Protocol
         public int TimeOut { get; set; }
 
         /// <summary>
-        /// Gets or sets number of retries before giving up
-        /// </summary>
-        public int Retries
-        {
-            get => _mRetries;
-            set
-            {
-                if (value >= 1)
-                    _mRetries = value;
-            }
-        }
-
-        /// <summary>
         /// Gets or set recursion for doing queries
         /// </summary>
-        public bool Recursion { get; set; }
+        public bool Recursion { get; }
 
         /// <summary>
         /// Gets or sets protocol to use
         /// </summary>
-        public TransportType TransportType { get; set; }
-
-        /// <summary>
-        /// Gets or sets list of DNS servers to use
-        /// </summary>
-        public IPEndPoint[] DnsServers
-        {
-            get => _mDnsServers.ToArray();
-            set
-            {
-                _mDnsServers.Clear();
-                _mDnsServers.AddRange(value);
-            }
-        }
+        public TransportType TransportType { get; }
 
         /// <summary>
         /// Gets first DNS server address or sets single DNS server to use
         /// </summary>
-        public string DnsServer
-        {
-            get => _mDnsServers[0].Address.ToString();
-            set
-            {
-                if (IPAddress.TryParse(value, out var ip))
-                {
-                    _mDnsServers.Clear();
-                    _mDnsServers.Add(new IPEndPoint(ip, DefaultPort));
-                    return;
-                }
-                Response response = Query(value, QuestionType.A);
-                if (response.GetAnswers<RecordA>().Any())
-                {
-                    _mDnsServers.Clear();
-                    _mDnsServers.Add(new IPEndPoint(response.GetAnswers<RecordA>().First().Address, DefaultPort));
-                }
-            }
-        }
+        public string DnsServer => DnsServers[0].Address.ToString();
 
         private Response UdpRequest(Request request)
         {
             // RFC1035 max. size of a UDP datagram is 512 bytes
             byte[] responseMessage = new byte[512];
 
-            for (int intAttempts = 0; intAttempts < _mRetries; intAttempts++)
+            for (int intAttempts = 0; intAttempts < Retries; intAttempts++)
             {
-                for (int intDnsServer = 0; intDnsServer < _mDnsServers.Count; intDnsServer++)
+                for (int intDnsServer = 0; intDnsServer < DnsServers.Count; intDnsServer++)
                 {
                     Socket socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
                     socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReceiveTimeout, TimeOut * 1000);
 
                     try
                     {
-                        socket.SendTo(request.Data, _mDnsServers[intDnsServer]);
+                        socket.SendTo(request.Data, DnsServers[intDnsServer]);
                         int intReceived = socket.Receive(responseMessage);
                         byte[] data = new byte[intReceived];
                         Array.Copy(responseMessage, data, intReceived);
-                        Response response = new Response(_mDnsServers[intDnsServer], data);
+                        Response response = new Response(DnsServers[intDnsServer], data);
+                        AddToCache(response);
                         return response;
                     }
                     catch (SocketException)
@@ -214,7 +128,7 @@ namespace Resolution.Protocol
                     }
                     finally
                     {
-                        _mUnique++;
+                        _unique++;
                         socket.Close();
                     }
                 }
@@ -228,15 +142,15 @@ namespace Resolution.Protocol
         {
             byte[] responseMessage = new byte[512];
 
-            for (int intAttempts = 0; intAttempts < _mRetries; intAttempts++)
+            for (int intAttempts = 0; intAttempts < Retries; intAttempts++)
             {
-                for (int intDnsServer = 0; intDnsServer < _mDnsServers.Count; intDnsServer++)
+                for (int intDnsServer = 0; intDnsServer < DnsServers.Count; intDnsServer++)
                 {
                     TcpClient tcpClient = new TcpClient {ReceiveTimeout = TimeOut * 1000};
 
                     try
                     {
-                        IAsyncResult result = tcpClient.BeginConnect(_mDnsServers[intDnsServer].Address, _mDnsServers[intDnsServer].Port, null, null);
+                        IAsyncResult result = tcpClient.BeginConnect(DnsServers[intDnsServer].Address, DnsServers[intDnsServer].Port, null, null);
 
                         bool success = result.AsyncWaitHandle.WaitOne(TimeOut * 1000, true);
 
@@ -273,13 +187,14 @@ namespace Resolution.Protocol
 
                             data = new byte[intLength];
                             bs.Read(data, 0, intLength);
-                            Response response = new Response(_mDnsServers[intDnsServer], data);
+                            Response response = new Response(DnsServers[intDnsServer], data);
 
                             if (response.Header.Rcode != ResponseCode.NoError)
                                 return response;
 
                             if (response.Questions[0].QuestionType != QuestionType.Axfr)
                             {
+                                AddToCache(response);
                                 return response;
                             }
 
@@ -309,7 +224,7 @@ namespace Resolution.Protocol
                     }
                     finally
                     {
-                        _mUnique++;
+                        _unique++;
 
                         // close the socket
                         tcpClient.Close();
@@ -321,6 +236,53 @@ namespace Resolution.Protocol
             return responseTimeout;
         }
 
+        private Response CacheLookup(Question question)
+        {
+            if (!UseCache)
+                return null;
+
+            Response response = _cache.Get(question);
+
+            if (response == null)
+                return null;
+
+            return response.Answers.Any(x => x.IsExpired(response.TimeStamp)) ? null : response;
+        }
+
+        private void AddToCache(Response response)
+        {
+            if (!UseCache)
+                return;
+
+            if (response.Questions.Count == 0)
+                return;
+
+            var question = response.Questions[0];
+            _cache.Set(question, response);
+        }
+
+        public void ClearCache()
+        {
+            if (!UseCache)
+                return;
+
+            _cache.Clear();
+        }
+
+        public Response GetCachedResponse(string domainName, QuestionType questionType,
+            QuestionClass questionClass = QuestionClass.In)
+        {   
+            var question = new Question(domainName, questionType, questionClass);
+            return CacheLookup(question);
+        }
+
+        public void DeleteCache(string domainName, QuestionType questionType,
+            QuestionClass questionClass = QuestionClass.In)
+        {
+            var question = new Question(domainName, questionType, questionClass);
+            _cache.Delete(question);
+        }
+
         /// <summary>
         /// Do Query on specified DNS servers
         /// </summary>
@@ -328,33 +290,32 @@ namespace Resolution.Protocol
         /// <param name="qtype">Question type</param>
         /// <param name="qclass">Class type</param>
         /// <returns>Response of the query</returns>
-        public Response Query(string name, QuestionType qtype, QuestionClass qclass)
+        public Response Query(string name, QuestionType qtype, QuestionClass qclass = QuestionClass.In)
         {
             Question question = new Question(name, qtype, qclass);
+            var cacheResponse = CacheLookup(question);
+            if (cacheResponse != null)
+                return cacheResponse;
 
             Request request = new Request();
             request.AddQuestion(question);
             return GetResponse(request);
         }
 
-        /// <summary>
-        /// Do an QClass=IN Query on specified DNS servers
-        /// </summary>
-        /// <param name="name">Name to query</param>
-        /// <param name="qtype">Question type</param>
-        /// <returns>Response of the query</returns>
-        public Response Query(string name, QuestionType qtype)
+        public static Response Query(string name, QuestionType questionType, string dnsServer = null,
+            QuestionClass @class = QuestionClass.In)
         {
-            Question question = new Question(name, qtype, QuestionClass.In);
+            var builder = new ResolverContextBuilder();
+            if (!string.IsNullOrEmpty(dnsServer))
+                builder.AddDnsServer(dnsServer);
 
-            Request request = new Request();
-            request.AddQuestion(question);
-            return GetResponse(request);
+            var resolver = new Resolver(builder.Build());
+            return resolver.Query(name, questionType, @class);
         }
 
         private Response GetResponse(Request request)
         {
-            request.Header.Id = _mUnique;
+            request.Header.Id = _unique;
             request.Header.Rd = Recursion;
 
             switch (TransportType)
@@ -373,55 +334,23 @@ namespace Resolution.Protocol
         /// Gets a list of default DNS servers used on the Windows machine.
         /// </summary>
         /// <returns></returns>
-        public static IPEndPoint[] GetDnsServers()
+        public static IList<IPEndPoint> GetDnsServers()
         {
             List<IPEndPoint> list = new List<IPEndPoint>();
 
             NetworkInterface[] adapters = NetworkInterface.GetAllNetworkInterfaces();
             foreach (NetworkInterface n in adapters)
             {
-                if (n.OperationalStatus == OperationalStatus.Up)
+                if (n.OperationalStatus != OperationalStatus.Up) continue;
+                IPInterfaceProperties ipProps = n.GetIPProperties();
+                foreach (IPAddress ipAddr in ipProps.DnsAddresses)
                 {
-                    IPInterfaceProperties ipProps = n.GetIPProperties();
-                    foreach (IPAddress ipAddr in ipProps.DnsAddresses)
-                    {
-                        IPEndPoint entry = new IPEndPoint(ipAddr, DefaultPort);
-                        if (!list.Contains(entry))
-                            list.Add(entry);
-                    }
-
+                    IPEndPoint entry = new IPEndPoint(ipAddr, DefaultPort);
+                    if (!list.Contains(entry))
+                        list.Add(entry);
                 }
             }
-            return list.ToArray();
-        }
-
-        private IPHostEntry MakeEntry(string hostName)
-        {
-            IPHostEntry entry = new IPHostEntry {HostName = hostName};
-
-
-            Response response = Query(hostName, QuestionType.A, QuestionClass.In);
-
-            // fill AddressList and aliases
-            List<IPAddress> addressList = new List<IPAddress>();
-            List<string> aliases = new List<string>();
-            foreach (AnswerResourceRecord answerRr in response.Answers)
-            {
-                if (answerRr.Type == Type.A)
-                {
-                    addressList.Add(IPAddress.Parse((answerRr.Record.ToString())));
-                    entry.HostName = answerRr.Name;
-                }
-                else
-                {
-                    if (answerRr.Type == Type.Cname)
-                        aliases.Add(answerRr.Name);
-                }
-            }
-            entry.AddressList = addressList.ToArray();
-            entry.Aliases = aliases.ToArray();
-
-            return entry;
+            return list;
         }
 
         /// <summary>

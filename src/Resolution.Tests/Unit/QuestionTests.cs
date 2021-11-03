@@ -12,7 +12,7 @@ namespace Resolution.Tests.Unit
             var content = Common.ReadFixture("Question", "www-google-com_basic");
             var question = new Question(new RecordReader(content));
 
-            Assert.AreEqual(question.QName, "www.google.com.");
+            Assert.AreEqual(question.DomainName, "www.google.com.");
             Assert.AreEqual(question.QuestionClass, QuestionClass.In);
             Assert.AreEqual(question.QuestionType, QuestionType.A);
         }

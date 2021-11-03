@@ -1,16 +1,17 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;netcoreapp2.0;net45;net461;net462</TargetFrameworks>
     <Authors>Dan Nielsen</Authors>
     <Company>Dan Nielsen</Company>
     <Description>A simple DNS resolver.</Description>
-    <Copyright>Copyright 2018</Copyright>
+    <Copyright>Copyright 2021</Copyright>
     <PackageProjectUrl>https://github.com/danielsen/Resolution</PackageProjectUrl>
     <RepositoryUrl>https://github.com/danielsen/Resolution</RepositoryUrl>
     <RepositoryType>git</RepositoryType>
     <PackageTags>dns</PackageTags>
     <PackageLicenseUrl>https://github.com/danielsen/Resolution/blob/master/LICENSE</PackageLicenseUrl>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <PackageVersion>2.0.0</PackageVersion>
   </PropertyGroup>
 
 </Project>
