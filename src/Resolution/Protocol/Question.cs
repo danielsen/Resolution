@@ -51,21 +51,21 @@ namespace Resolution.Protocol
                     _mQName += ".";
             }
         }
-        public QType QType;
-        public QClass QClass;
+        public QuestionType QuestionType;
+        public QuestionClass QuestionClass;
 
-        public Question(string qName, QType qType, QClass qClass)
+        public Question(string qName, QuestionType questionType, QuestionClass questionClass)
         {
             QName = qName;
-            QType = qType;
-            QClass = qClass;
+            QuestionType = questionType;
+            QuestionClass = questionClass;
         }
 
         public Question(RecordReader rr)
         {
             QName = rr.ReadDomainName();
-            QType = (QType)rr.ReadUInt16();
-            QClass = (QClass)rr.ReadUInt16();
+            QuestionType = (QuestionType)rr.ReadUInt16();
+            QuestionClass = (QuestionClass)rr.ReadUInt16();
         }
 
         private byte[] WriteName(string src)
@@ -98,8 +98,8 @@ namespace Resolution.Protocol
             {
                 List<byte> data = new List<byte>();
                 data.AddRange(WriteName(QName));
-                data.AddRange(WriteShort((ushort)QType));
-                data.AddRange(WriteShort((ushort)QClass));
+                data.AddRange(WriteShort((ushort)QuestionType));
+                data.AddRange(WriteShort((ushort)QuestionClass));
                 return data.ToArray();
             }
         }
@@ -112,7 +112,7 @@ namespace Resolution.Protocol
 
         public override string ToString()
         {
-            return $"{QName,-32}\t{QClass}\t{QType}";
+            return $"{QName,-32}\t{QuestionClass}\t{QuestionType}";
         }
     }
 }

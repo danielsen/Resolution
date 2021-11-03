@@ -52,7 +52,7 @@ namespace Resolution.Protocol
     /// <summary>
     /// Resource Record (rfc1034 3.6.)
     /// </summary>
-    public class Rr
+    public class ResourceRecord
     {
         /// <summary>
         /// The name of the node to which this resource record pertains
@@ -82,7 +82,7 @@ namespace Resolution.Protocol
         /// <summary>
         /// 
         /// </summary>
-        public ushort Rdlength;
+        public ushort RecordLength;
 
         /// <summary>
         /// One of the Record* classes
@@ -91,16 +91,16 @@ namespace Resolution.Protocol
 
         public int TimeLived;
 
-        public Rr(RecordReader rr)
+        public ResourceRecord(RecordReader rr)
         {
             TimeLived = 0;
             Name = rr.ReadDomainName();
             Type = (Type)rr.ReadUInt16();
             Class = (Class)rr.ReadUInt16();
             Ttl = rr.ReadUInt32();
-            Rdlength = rr.ReadUInt16();
-            Record = rr.ReadRecord(Type, Rdlength);
-            Record.Rr = this;
+            RecordLength = rr.ReadUInt16();
+            Record = rr.ReadRecord(Type, RecordLength);
+            Record.ResourceRecord = this;
         }
 
         public override string ToString()
@@ -109,25 +109,25 @@ namespace Resolution.Protocol
         }
     }
 
-    public class AnswerRr : Rr
+    public class AnswerResourceRecord : ResourceRecord
     {
-        public AnswerRr(RecordReader br)
+        public AnswerResourceRecord(RecordReader br)
             : base(br)
         {
         }
     }
 
-    public class AuthorityRr : Rr
+    public class AuthorityResourceRecord : ResourceRecord
     {
-        public AuthorityRr(RecordReader br)
+        public AuthorityResourceRecord(RecordReader br)
             : base(br)
         {
         }
     }
 
-    public class AdditionalRr : Rr
+    public class AdditionalResourceRecord : ResourceRecord
     {
-        public AdditionalRr(RecordReader br)
+        public AdditionalResourceRecord(RecordReader br)
             : base(br)
         {
         }

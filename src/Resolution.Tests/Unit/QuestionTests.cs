@@ -13,8 +13,8 @@ namespace Resolution.Tests.Unit
             var question = new Question(new RecordReader(content));
 
             Assert.AreEqual(question.QName, "www.google.com.");
-            Assert.AreEqual(question.QClass, QClass.In);
-            Assert.AreEqual(question.QType, QType.A);
+            Assert.AreEqual(question.QuestionClass, QuestionClass.In);
+            Assert.AreEqual(question.QuestionType, QuestionType.A);
         }
     }
 }

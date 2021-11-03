@@ -8,6 +8,7 @@ using System.Net.Sockets;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
+using Resolution.Protocol.Records;
 
 namespace Resolution.Protocol
 {
@@ -25,15 +26,6 @@ namespace Resolution.Protocol
         /// Default DNS port
         /// </summary>
         public const int DefaultPort = 53;
-
-        /// <summary>
-        /// Gets list of OPENDNS servers
-        /// </summary>
-        public static readonly IPEndPoint[] DefaultDnsServers =
-        {
-            new IPEndPoint(IPAddress.Parse("208.67.222.222"), DefaultPort),
-            new IPEndPoint(IPAddress.Parse("208.67.220.220"), DefaultPort)
-        };
 
         private ushort _mUnique;
         private int _mRetries;
@@ -124,13 +116,12 @@ namespace Resolution.Protocol
 
         public class VerboseEventArgs : EventArgs
         {
-            public string Message;
+            public string Message { get; }
             public VerboseEventArgs(string message)
             {
                 Message = message;
             }
         }
-
 
         /// <summary>
         /// Gets or sets timeout in milliseconds
@@ -187,11 +178,11 @@ namespace Resolution.Protocol
                     _mDnsServers.Add(new IPEndPoint(ip, DefaultPort));
                     return;
                 }
-                Response response = Query(value, QType.A);
-                if (response.RecordsA.Any())
+                Response response = Query(value, QuestionType.A);
+                if (response.GetAnswers<RecordA>().Any())
                 {
                     _mDnsServers.Clear();
-                    _mDnsServers.Add(new IPEndPoint(response.RecordsA.First().Address, DefaultPort));
+                    _mDnsServers.Add(new IPEndPoint(response.GetAnswers<RecordA>().First().Address, DefaultPort));
                 }
             }
         }
@@ -284,10 +275,10 @@ namespace Resolution.Protocol
                             bs.Read(data, 0, intLength);
                             Response response = new Response(_mDnsServers[intDnsServer], data);
 
-                            if (response.Header.Rcode != RCode.NoError)
+                            if (response.Header.Rcode != ResponseCode.NoError)
                                 return response;
 
-                            if (response.Questions[0].QType != QType.Axfr)
+                            if (response.Questions[0].QuestionType != QuestionType.Axfr)
                             {
                                 return response;
                             }
@@ -337,7 +328,7 @@ namespace Resolution.Protocol
         /// <param name="qtype">Question type</param>
         /// <param name="qclass">Class type</param>
         /// <returns>Response of the query</returns>
-        public Response Query(string name, QType qtype, QClass qclass)
+        public Response Query(string name, QuestionType qtype, QuestionClass qclass)
         {
             Question question = new Question(name, qtype, qclass);
 
@@ -352,9 +343,9 @@ namespace Resolution.Protocol
         /// <param name="name">Name to query</param>
         /// <param name="qtype">Question type</param>
         /// <returns>Response of the query</returns>
-        public Response Query(string name, QType qtype)
+        public Response Query(string name, QuestionType qtype)
         {
-            Question question = new Question(name, qtype, QClass.In);
+            Question question = new Question(name, qtype, QuestionClass.In);
 
             Request request = new Request();
             request.AddQuestion(question);
@@ -409,12 +400,12 @@ namespace Resolution.Protocol
             IPHostEntry entry = new IPHostEntry {HostName = hostName};
 
 
-            Response response = Query(hostName, QType.A, QClass.In);
+            Response response = Query(hostName, QuestionType.A, QuestionClass.In);
 
             // fill AddressList and aliases
             List<IPAddress> addressList = new List<IPAddress>();
             List<string> aliases = new List<string>();
-            foreach (AnswerRr answerRr in response.Answers)
+            foreach (AnswerResourceRecord answerRr in response.Answers)
             {
                 if (answerRr.Type == Type.A)
                 {

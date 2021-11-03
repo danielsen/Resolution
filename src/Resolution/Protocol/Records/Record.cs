@@ -7,6 +7,6 @@ namespace Resolution.Protocol.Records
 		/// <summary>
 		/// The Resource Record this RDATA record belongs to
 		/// </summary>
-		public Rr Rr;
+		public ResourceRecord ResourceRecord;
 	}
 }

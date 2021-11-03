@@ -209,9 +209,9 @@ namespace Resolution.Protocol
         /// <summary>
         /// Specifies kind of query
         /// </summary>
-        public OpCode Opcode
+        public OperationCode Opcode
         {
-            get => (OpCode)GetBits(_flags, 11, 4);
+            get => (OperationCode)GetBits(_flags, 11, 4);
             set => _flags = SetBits(_flags, 11, 4, (ushort)value);
         }
 
@@ -263,9 +263,9 @@ namespace Resolution.Protocol
         /// <summary>
         /// Response code
         /// </summary>
-        public RCode Rcode
+        public ResponseCode Rcode
         {
-            get => (RCode)GetBits(_flags, 0, 4);
+            get => (ResponseCode)GetBits(_flags, 0, 4);
             set => _flags = SetBits(_flags, 0, 4, (ushort)value);
         }
     }

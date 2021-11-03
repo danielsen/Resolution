@@ -11,7 +11,7 @@ namespace Resolution.Protocol
         public Request()
         {
             Header = new Header();
-            Header.Opcode = OpCode.Query;
+            Header.Opcode = OperationCode.Query;
             Header.Qdcount = 0;
 
             _questions = new List<Question>();

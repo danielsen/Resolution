@@ -20,7 +20,7 @@ namespace Resolution.Tests.Unit
         public void should_read_resource_record(string resource, Protocol.Type type, Class pClass, int ttl)
         {
             var content = GetContentResource(resource);
-            var rr = new Rr(new RecordReader(content));
+            var rr = new ResourceRecord(new RecordReader(content));
 
             Assert.AreEqual(rr.Class, pClass);
             Assert.AreEqual(rr.Type, type);

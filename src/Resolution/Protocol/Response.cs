@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Net;
-using Resolution.Protocol.Records;
 
 namespace Resolution.Protocol
 {
@@ -15,17 +14,17 @@ namespace Resolution.Protocol
         /// <summary>
         /// List of AnswerRr records
         /// </summary>
-        public List<AnswerRr> Answers;
+        public List<AnswerResourceRecord> Answers;
 
         /// <summary>
         /// List of AuthorityRr records
         /// </summary>
-        public List<AuthorityRr> Authorities;
+        public List<AuthorityResourceRecord> Authorities;
 
         /// <summary>
         /// List of AdditionalRr records
         /// </summary>
-        public List<AdditionalRr> Additionals;
+        public List<AdditionalResourceRecord> Additionals;
 
         public Header Header;
 
@@ -52,9 +51,9 @@ namespace Resolution.Protocol
         public Response()
         {
             Questions = new List<Question>();
-            Answers = new List<AnswerRr>();
-            Authorities = new List<AuthorityRr>();
-            Additionals = new List<AdditionalRr>();
+            Answers = new List<AnswerResourceRecord>();
+            Authorities = new List<AuthorityResourceRecord>();
+            Additionals = new List<AdditionalResourceRecord>();
 
             Server = new IPEndPoint(0, 0);
             Error = "";
@@ -72,9 +71,9 @@ namespace Resolution.Protocol
             var rr = new RecordReader(data);
 
             Questions = new List<Question>();
-            Answers = new List<AnswerRr>();
-            Authorities = new List<AuthorityRr>();
-            Additionals = new List<AdditionalRr>();
+            Answers = new List<AnswerResourceRecord>();
+            Authorities = new List<AuthorityResourceRecord>();
+            Additionals = new List<AdditionalResourceRecord>();
 
             Header = new Header(rr);
 
@@ -85,21 +84,21 @@ namespace Resolution.Protocol
 
             for (var intI = 0; intI < Header.Ancount; intI++)
             {
-                Answers.Add(new AnswerRr(rr));
+                Answers.Add(new AnswerResourceRecord(rr));
             }
 
             for (var intI = 0; intI < Header.Nscount; intI++)
             {
-                Authorities.Add(new AuthorityRr(rr));
+                Authorities.Add(new AuthorityResourceRecord(rr));
             }
 
             for (var intI = 0; intI < Header.Arcount; intI++)
             {
-                Additionals.Add(new AdditionalRr(rr));
+                Additionals.Add(new AdditionalResourceRecord(rr));
             }
         }
 
-        private IEnumerable<T> GetAnswers<T>()
+        public IEnumerable<T> GetAnswers<T>()
         {
             var list = new List<T>();
             foreach (var answerRr in Answers)
@@ -112,199 +111,5 @@ namespace Resolution.Protocol
 
             return list;
         }
-        /// <summary>
-        /// List of RecordMx in Response.Answers
-        /// </summary>
-        public IEnumerable<RecordMx> RecordsMx
-        {
-            get
-            {
-                var list = new List<RecordMx>();
-                foreach (var answerRr in Answers)
-                {
-                    if (answerRr.Record is RecordMx record)
-                        list.Add(record);
-                }
-
-                list.Sort();
-                return list;
-            }
-        }
-
-        /// <summary>
-        /// List of RecordTxt in Response.Answers
-        /// </summary>
-        public IEnumerable<RecordTxt> RecordsTxt => GetAnswers<RecordTxt>();
-
-        /// <summary>
-        /// List of RecordA in Response.Answers
-        /// </summary>
-        public IEnumerable<RecordA> RecordsA
-        {
-            get
-            {
-                var list = new List<RecordA>();
-                foreach (var answerRr in Answers)
-                {
-                    if (answerRr.Record is RecordA record)
-                        list.Add(record);
-                }
-
-                return list;
-            }
-        }
-
-        /// <summary>
-        /// List of RecordPtr in Response.Answers
-        /// </summary>
-        public IEnumerable<RecordPtr> RecordsPtr
-        {
-            get
-            {
-                var list = new List<RecordPtr>();
-                foreach (var answerRr in Answers)
-                {
-                    if (answerRr.Record is RecordPtr record)
-                        list.Add(record);
-                }
-
-                return list;
-            }
-        }
-
-        /// <summary>
-        /// List of RecordCname in Response.Answers
-        /// </summary>
-        public IEnumerable<RecordCname> RecordsCname
-        {
-            get
-            {
-                var list = new List<RecordCname>();
-                foreach (var answerRr in Answers)
-                {
-                    if (answerRr.Record is RecordCname record)
-                        list.Add(record);
-                }
-
-                return list;
-            }
-        }
-
-        /// <summary>
-        /// List of RecordAaaa in Response.Answers
-        /// </summary>
-        public IEnumerable<RecordAaaa> RecordsAaaa
-        {
-            get
-            {
-                var list = new List<RecordAaaa>();
-                foreach (var answerRr in Answers)
-                {
-                    if (answerRr.Record is RecordAaaa record)
-                        list.Add(record);
-                }
-
-                return list;
-            }
-        }
-
-        /// <summary>
-        /// List of RecordNs in Response.Answers
-        /// </summary>
-        public IEnumerable<RecordNs> RecordsNs
-        {
-            get
-            {
-                var list = new List<RecordNs>();
-                foreach (var answerRr in Answers)
-                {
-                    if (answerRr.Record is RecordNs record)
-                        list.Add(record);
-                }
-
-                return list;
-            }
-        }
-
-        /// <summary>
-        /// List of RecordSoa in Response.Answers
-        /// </summary>
-        public IEnumerable<RecordSoa> RecordsSoa
-        {
-            get
-            {
-                var list = new List<RecordSoa>();
-                foreach (var answerRr in Answers)
-                {
-                    if (answerRr.Record is RecordSoa record)
-                        list.Add(record);
-                }
-
-                return list;
-            }
-        }
-
-        /// <summary>
-        /// List of RecordCert in Response.Answers
-        /// </summary>
-        public IEnumerable<RecordCert> RecordsCert
-        {
-            get
-            {
-                var list = new List<RecordCert>();
-                foreach (var answerRr in Answers)
-                {
-                    if (answerRr.Record is RecordCert record)
-                        list.Add(record);
-                }
-
-                return list;
-            }
-        }
-
-        public IEnumerable<RecordSrv> RecordsSrv
-        {
-            get
-            {
-                var list = new List<RecordSrv>();
-                foreach (var answerRr in Answers)
-                {
-                    if (answerRr.Record is RecordSrv record)
-                        list.Add(record);
-                }
-
-                return list;
-            }
-        }
-
-        public IEnumerable<Rr> RecordsRr
-        {
-            get
-            {
-                var list = new List<Rr>();
-                foreach (AnswerRr rr in Answers)
-                {
-                    list.Add(rr);
-                }
-
-                foreach (AnswerRr rr in Answers)
-                {
-                    list.Add(rr);
-                }
-
-                foreach (AuthorityRr rr in Authorities)
-                {
-                    list.Add(rr);
-                }
-
-                foreach (AdditionalRr rr in Additionals)
-                {
-                    list.Add(rr);
-                }
-
-                return list;
-            }
-        }
     }
-
 }

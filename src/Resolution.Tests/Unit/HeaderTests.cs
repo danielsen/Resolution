@@ -71,7 +71,7 @@ namespace Resolution.Tests.Unit
             var content = GetHeaderContent(param);
             var header = new Header(new RecordReader(content));
 
-            Assert.AreEqual(header.Opcode, OpCode.Status);
+            Assert.AreEqual(header.Opcode, OperationCode.Status);
         }
 
         [TestCase("aa")]
@@ -116,7 +116,7 @@ namespace Resolution.Tests.Unit
             var content = GetHeaderContent(param);
             var header = new Header(new RecordReader(content));
 
-            Assert.AreEqual(header.Rcode, RCode.ServFail);
+            Assert.AreEqual(header.Rcode, ResponseCode.ServFail);
         }
     }
 }

@@ -111,7 +111,7 @@ namespace Resolution.Protocol
 	 *
 	 *		QTYPE		value			meaning
 	 */
-    public enum QType : ushort
+    public enum QuestionType : ushort
     {
         A = Type.A,         // a IPV4 host address
         Ns = Type.Ns,       // an authoritative name server
@@ -231,7 +231,7 @@ namespace Resolution.Protocol
 	 *
 	 *		QCLASS		value			meaning
 	 */
-    public enum QClass : ushort
+    public enum QuestionClass : ushort
     {
         In = Class.In,      // the Internet
         Cs = Class.Cs,      // the CSNET class (Obsolete - used only for examples in some obsolete RFCs)
@@ -248,7 +248,7 @@ namespace Resolution.Protocol
 	 *
 	 *		QCLASS		value			meaning
 	 */
-    public enum RCode
+    public enum ResponseCode
     {
         NoError = 0,        // No Error                           [RFC1035]
         FormErr = 1,        // Format Error                       [RFC1035]
@@ -297,7 +297,7 @@ namespace Resolution.Protocol
      *     2               a server status request (STATUS)
      *     3-15            reserved for future use
 	 */
-    public enum OpCode
+    public enum OperationCode
     {
         Query = 0,              // a standard query (QUERY)
         Iquery = 1,             // OpCode Retired (previously IQUERY - No further [RFC3425]
